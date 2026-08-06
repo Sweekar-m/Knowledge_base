@@ -407,15 +407,17 @@ def _handle_inline_search(query: str, project_id: int):
         return
     for _, score, content, fp in results:
         console.print(f"\n[dim]{fp}[/dim]")
-        console.print(content[:400])
+        console.print(content[:400], markup=False)
 
 
 def _show_chat_history(chat_id: int):
+    from rich.markup import escape
     from kb.memory.conversation import get_chat_messages
     msgs = get_chat_messages(chat_id)
     for m in msgs[-10:]:
         role_style = "cyan" if m.role == "user" else "green"
-        console.print(f"[{role_style}]{m.role.upper()}[/{role_style}]: {m.content[:200]}")
+        escaped_content = escape(m.content[:200])
+        console.print(f"[{role_style}]{m.role.upper()}[/{role_style}]: {escaped_content}")
 
 
 @app.command()
@@ -478,6 +480,7 @@ def search(
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ):
     """Search the knowledge base (no LLM call)."""
+    from rich.text import Text
     from kb.config.settings import get_settings
     from kb.indexer.auto_scan import auto_scan_if_needed
 
@@ -506,7 +509,7 @@ def search(
 
     for i, (cid, score, content, fp) in enumerate(results, 1):
         console.print(Panel(
-            content[:600],
+            Text(content[:600]),
             title=f"[{i}] [cyan]{fp}[/cyan]  score={score:.4f}",
             border_style="dim blue",
             expand=False,

@@ -26,18 +26,17 @@ def _get_client() -> OpenAI:
     )
 
 
+from rich.text import Text
+
+
 def _safe_print(text: str, style: str = ""):
+    t = Text(text, style=style) if style else text
     try:
-        if style:
-            console.print(f"[{style}]{text}[/{style}]", end="")
-        else:
-            console.print(text, end="")
-    except UnicodeEncodeError:
+        console.print(t, end="", markup=False)
+    except Exception:
         safe_text = text.encode("ascii", errors="replace").decode("ascii")
-        if style:
-            console.print(f"[{style}]{safe_text}[/{style}]", end="")
-        else:
-            console.print(safe_text, end="")
+        t_safe = Text(safe_text, style=style) if style else safe_text
+        console.print(t_safe, end="", markup=False)
 
 
 _UNK_RE = re.compile(r"<unk>|<\|.*?\|>|\[UNK\]", re.IGNORECASE)
