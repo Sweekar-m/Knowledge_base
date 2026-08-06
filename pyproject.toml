@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knowldge-base"
+version = "1.0.0"
+description = "Local AI Knowledge Base & Prompt Engine powered by NVIDIA Nemotron"
+requires-python = ">=3.10"
+dependencies = [
+    # CLI & Display
+    "typer[all]>=0.12.0",
+    "rich>=13.7.0",
+    # LLM
+    "openai>=1.30.0",
+    # Database
+    "sqlalchemy>=2.0.0",
+    # Config
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "pyyaml>=6.0",
+    # Embeddings & Vector Store
+    "sentence-transformers>=3.0.0",
+    "faiss-cpu>=1.7.4",
+    "numpy>=1.26.0",
+    # AST Parsing
+    "tree-sitter>=0.22.0",
+    "tree-sitter-python>=0.22.0",
+    "tree-sitter-javascript>=0.22.0",
+    "tree-sitter-typescript>=0.22.0",
+    # Git
+    "gitpython>=3.1.40",
+    # File watching
+    "watchdog>=4.0.0",
+    # Hashing & Token counting
+    "xxhash>=3.4.0",
+    "tiktoken>=0.7.0",
+    # Utilities
+    "python-dateutil>=2.8.0",
+    "pathspec>=0.12.0",
+]
+
+[project.scripts]
+kb = "kb.main:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kb*"]

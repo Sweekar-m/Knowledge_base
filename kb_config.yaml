@@ -1,0 +1,130 @@
+# ============================================================
+# Local AI Knowledge Base — Configuration
+# ============================================================
+
+# ----- NVIDIA LLM API -----
+nvidia:
+  api_key: "<your_api_key>"          # Replace with your key
+  base_url: "https://integrate.api.nvidia.com/v1"
+  model: "nvidia/nemotron-3-ultra-550b-a55b"
+  temperature: 0.3
+  top_p: 0.95
+  max_tokens: 16384
+  reasoning_budget: 16384
+  enable_thinking: true
+
+# ----- Project Scanning -----
+project:
+  default_path: "."                          # Scanned by `kb scan` when no path given
+  name: "MyProject"
+
+ignored_dirs:
+  - node_modules
+  - .git
+  - build
+  - dist
+  - target
+  - .venv
+  - venv
+  - __pycache__
+  - .mypy_cache
+  - .pytest_cache
+  - .ruff_cache
+  - coverage
+  - .coverage
+  - htmlcoverage
+  - .idea
+  - .vscode
+
+ignored_extensions:
+  - .png
+  - .jpg
+  - .jpeg
+  - .gif
+  - .svg
+  - .ico
+  - .webp
+  - .mp4
+  - .avi
+  - .mov
+  - .mp3
+  - .wav
+  - .pdf
+  - .zip
+  - .tar
+  - .gz
+  - .exe
+  - .dll
+  - .so
+  - .dylib
+  - .bin
+  - .lock         # package-lock.json kept via name but yarn.lock etc skipped
+
+# ----- Supported File Types -----
+supported_extensions:
+  - .ts
+  - .tsx
+  - .js
+  - .jsx
+  - .py
+  - .java
+  - .go
+  - .rs
+  - .cpp
+  - .c
+  - .h
+  - .hpp
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .txt
+  - .toml
+  - .env.example
+
+supported_filenames:
+  - package.json
+  - README.md
+  - Dockerfile
+  - docker-compose.yml
+  - .env.example
+  - Makefile
+  - CMakeLists.txt
+
+# ----- Embeddings -----
+embeddings:
+  provider: "local"                          # "local" (sentence-transformers) or "nvidia"
+  model: "all-MiniLM-L6-v2"
+  batch_size: 64
+  dimension: 384                             # matches all-MiniLM-L6-v2
+
+# ----- Chunking -----
+chunking:
+  chunk_size: 512                            # tokens per chunk
+  chunk_overlap: 64                          # overlapping tokens between chunks
+
+# ----- Retrieval -----
+retrieval:
+  top_k: 10                                  # chunks to retrieve per query
+  max_context_tokens: 12000                  # token budget for system prompt
+
+# ----- Database -----
+database:
+  path: "~/.kb/kb.sqlite"                   # SQLite file path
+  faiss_index_path: "~/.kb/faiss.index"     # FAISS index file
+
+# ----- Indexer -----
+indexer:
+  workers: 4                                 # ThreadPoolExecutor workers
+  max_file_size_mb: 5                        # skip files larger than this
+  auto_scan: true                            # auto-scan repo on startup & commands
+
+# ----- Memory -----
+memory:
+  recent_chats: 3                            # past chat sessions to include in context
+  max_past_messages: 10                      # messages to pull from recent chats
+
+# ----- Git -----
+git:
+  recent_commits: 10                         # commits to include in context
+  diff_max_lines: 200                        # max diff lines in context
