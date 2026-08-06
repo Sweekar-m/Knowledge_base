@@ -129,9 +129,39 @@ _CONFIG_SEARCH_PATHS = [
 _settings: Optional[Settings] = None
 
 
+def _load_dotenv_files():
+    """Load environment variables from .env files in CWD, ~/.kb/.env, or pkg root."""
+    env_paths = [
+        Path.cwd() / ".env",
+        Path.home() / ".kb" / ".env",
+        _PKG_CONFIG.parent / ".env",
+    ]
+    try:
+        from dotenv import load_dotenv
+        for p in env_paths:
+            if p.exists():
+                load_dotenv(p, override=False)
+    except ImportError:
+        for p in env_paths:
+            if p.exists():
+                try:
+                    for line in p.read_text(encoding="utf-8").splitlines():
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k = k.strip()
+                            v = v.strip().strip("'\"")
+                            if k and k not in os.environ:
+                                os.environ[k] = v
+                except Exception:
+                    pass
+
+
 def load_settings(config_path: Optional[Path] = None) -> Settings:
     """Load settings from YAML config file, falling back to defaults."""
     global _settings
+
+    _load_dotenv_files()
 
     # Search for config file
     search_paths = [config_path] if config_path else _CONFIG_SEARCH_PATHS
@@ -143,9 +173,10 @@ def load_settings(config_path: Optional[Path] = None) -> Settings:
                 raw = yaml.safe_load(f) or {}
             break
 
-    # Override from environment variables
-    if "KB_NVIDIA_API_KEY" in os.environ:
-        raw.setdefault("nvidia", {})["api_key"] = os.environ["KB_NVIDIA_API_KEY"]
+    # Override from environment variables (.env or os.environ)
+    env_api_key = os.environ.get("KB_NVIDIA_API_KEY") or os.environ.get("NVIDIA_API_KEY")
+    if env_api_key:
+        raw.setdefault("nvidia", {})["api_key"] = env_api_key
 
     _settings = Settings(**raw)
 

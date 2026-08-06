@@ -36,13 +36,18 @@ pip uninstall knowldge-base -y
 
 ## ⚙️ Configuration
 
-Set your NVIDIA API key in environment variables or edit `kb_config.yaml`:
+Create a `.env` file in your workspace or home directory (`~/.kb/.env`):
 
+```env
+KB_NVIDIA_API_KEY=nvapi-YOUR_NVIDIA_API_KEY_HERE
+```
+
+Or set environment variables:
 ```bash
 set KB_NVIDIA_API_KEY=nvapi-YOUR_NVIDIA_API_KEY_HERE
 ```
 
-Or configure `kb_config.yaml`:
+Or edit `kb_config.yaml`:
 ```yaml
 nvidia:
   api_key: "nvapi-YOUR_KEY"
